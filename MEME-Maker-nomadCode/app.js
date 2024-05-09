@@ -2,7 +2,9 @@ const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
 canvas.width = 800;
 canvas.height = 800;
+ctx.lineWidth = 2;
 
+/* basic */
 // ctx.fillRect 사각형을 만드는 함수 x, y, width, height
 // ctx.rect(50, 50, 100, 100);
 // ctx.rect(150, 150, 100, 100);
@@ -22,7 +24,7 @@ canvas.height = 800;
 // ctx.lineTo(50, 50);
 // ctx.fill();
 
-//house
+/* house */
 // ctx.fillRect(200, 200, 50, 200) //left wall
 // ctx.fillRect(400, 200, 50, 200) //right wall
 // ctx.lineWidth = 2; //door width
@@ -33,17 +35,60 @@ canvas.height = 800;
 // ctx.lineTo(450, 200); //지붕 right
 // ctx.fill();
 
+/* person */
+// ctx.fillRect(210 - 40, 200 - 30, 15, 100);
+// ctx.fillRect(350 - 40, 200 - 30, 15, 100);
+// ctx.fillRect(260 - 40, 200 - 30, 60, 200);
 
-//person
-ctx.fillRect(210 - 40, 200 - 30, 15, 100);
-ctx.fillRect(350 - 40, 200 - 30, 15, 100);
-ctx.fillRect(260 - 40, 200 - 30, 60, 200);
+// ctx.arc(250, 100, 50, 0, 2 * Math.PI); //x y radius startAngle endAngle  //2*PI는 완전한 원 https://www.w3schools.com/jsref/canvas_arc.asp
+// ctx.fill();
 
-ctx.arc(250, 100, 50, 0, 2 * Math.PI); //x y radius startAngle endAngle  //2*PI는 완전한 원 https://www.w3schools.com/jsref/canvas_arc.asp
-ctx.fill();
+// ctx.beginPath();
+// ctx.fillStyle = "white";
+// ctx.arc(260 + 10, 80, 8, Math.PI, 2 * Math.PI);
+// ctx.arc(220 + 10, 80, 8, Math.PI, 2 * Math.PI);
+// ctx.fill();
 
-ctx.beginPath();
-ctx.fillStyle = "white";
-ctx.arc(260 + 10, 80, 8, Math.PI, 2 * Math.PI); 
-ctx.arc(220 + 10, 80, 8, Math.PI, 2 * Math.PI); 
-ctx.fill();
+/* mousemove */
+// const colors = [
+//   "#cd84f1",
+//   "#32ff7e",
+//   "#ff4d4d",
+//   "#ffaf40",
+//   "#fffa65",
+//   "#18dcff",
+//   "#7d5fff",
+//   "#4b4b4b",
+// ];
+// ctx.moveTo(0, 0);
+// function onclick(event) {
+//   ctx.beginPath();
+//   ctx.moveTo(0, 0);
+//   const color = colors[Math.floor(Math.random() * colors.length)];
+//   ctx.strokeStyle = color;
+//   ctx.lineTo(event.offsetX, event.offsetY);
+//   ctx.stroke();
+//   console.log(event);
+// }
+// canvas.addEventListener("mousemove", onclick);
+
+/* mousedown */
+let isPainting = false;
+function onMove(event) {
+  if (isPainting) {
+    ctx.lineTo(event.offsetX, event.offsetY);
+    ctx.stroke();
+    return;
+  }
+  ctx.moveTo(event.offsetX, event.offsetY);
+}
+function onMouseDown(event) {
+  isPainting = true;
+}
+function cancelPainting(event) {
+  isPainting = false;
+}
+canvas.addEventListener("mousemove", onMove);
+canvas.addEventListener("mousedown", onMouseDown);
+canvas.addEventListener("mouseup", cancelPainting);
+canvas.addEventListener("mouseleave", cancelPainting);
