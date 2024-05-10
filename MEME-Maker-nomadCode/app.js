@@ -1,8 +1,9 @@
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
+const lineWidth = document.getElementById("line-width");
 canvas.width = 800;
 canvas.height = 800;
-ctx.lineWidth = 2;
+ctx.lineWidth = lineWidth.value;
 
 /* basic */
 // ctx.fillRect 사각형을 만드는 함수 x, y, width, height
@@ -80,6 +81,7 @@ function onMove(event) {
     ctx.stroke();
     return;
   }
+  ctx.beginPath(); //선을 하나씩 그리고 끝내야함, 새로운 선으로 시작
   ctx.moveTo(event.offsetX, event.offsetY);
 }
 function onMouseDown(event) {
@@ -88,7 +90,15 @@ function onMouseDown(event) {
 function cancelPainting(event) {
   isPainting = false;
 }
+
+/* width change */
+function onLineWidthChange(event) {
+  console.log(event.target.value);
+  ctx.lineWidth = event.target.value;
+}
 canvas.addEventListener("mousemove", onMove);
 canvas.addEventListener("mousedown", onMouseDown);
 canvas.addEventListener("mouseup", cancelPainting);
 canvas.addEventListener("mouseleave", cancelPainting);
+
+lineWidth.addEventListener("change", onLineWidthChange);
