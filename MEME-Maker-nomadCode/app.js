@@ -17,8 +17,8 @@ const saveBtn = document.getElementById("save");
 
 let isPainting = false;
 let isFilling = false;
-// canvas.width = CANVAS_WIDTH;
-// canvas.height = CANVAS_HEIGHT;
+canvas.width = CANVAS_WIDTH;
+canvas.height = CANVAS_HEIGHT;
 ctx.lineWidth = lineWidth.value;
 ctx.lineCap = "round";
 
