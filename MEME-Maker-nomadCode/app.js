@@ -1,7 +1,7 @@
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
-const CANVAS_WIDTH = 800;
-const CANVAS_HEIGHT = 800;
+let CANVAS_WIDTH = 800;
+let CANVAS_HEIGHT = 800;
 const lineWidth = document.getElementById("line-width");
 const color = document.getElementById("color");
 const colorOptions = Array.from(
@@ -216,3 +216,18 @@ destroyBtn.addEventListener("click", onDestroyClick);
 eraserBtn.addEventListener("click", onEraserClick);
 fileInput.addEventListener("change", onFileChange);
 saveBtn.addEventListener("click", onSaveClick);
+
+/* personal */
+/* 750에서 width height값 바꾸기 */
+// let moWidth = 751;
+
+// window.addEventListener("resize", function () {
+//   if (window.innerWidth < moWidth) {
+//     console.log("moWidth");
+//     canvas.width = 600;
+//     canvas.height = 600;
+//   } else {
+//     canvas.width = 800;
+//     canvas.height = 800;
+//   }
+// });

@@ -1,11 +1,4 @@
 @import "reset.css";
-.main-canvas {
-  width: 800px;
-  height: 800px;
-  background-color: white;
-  border-radius: 10px;
-  flex: 0 0 auto;
-}
 
 body {
   background-color: gainsboro;
@@ -22,6 +15,11 @@ body {
   justify-content: space-between;
   align-items: center;
   box-sizing: border-box;
+}
+.main-canvas {
+  background-color: white;
+  border-radius: 10px;
+  flex: 0 0 auto;
 }
 .btns {
   display: flex;
@@ -86,19 +84,22 @@ input#file {
 }
 
 @media all and (max-width: 1140px) {
+  .inner {
+    flex-direction: column;
+    gap: 20px;
+  }
   .color-options {
-    width: 15%;
+    flex-direction: row;
+    gap: 2%;
+    width: 100%;
   }
   .color-option {
-    width: 50%;
-    height: 0;
-    padding-bottom: 50%;
-  }
-  .main-canvas {
-    width: 70%;
+    width: 30px;
+    height: 30px;
+    padding-bottom: 0;
   }
   .btns {
-    width: 15%;
+    width: 50%;
   }
 }
 
@@ -106,14 +107,8 @@ input#file {
   body {
     height: 100%;
   }
-  .inner {
-    flex-direction: column;
-    gap: 20px;
-  }
   .color-options {
-    flex-direction: row;
     width: 100%;
-    gap: 2%;
     flex-wrap: wrap;
   }
   input#color {
@@ -124,11 +119,5 @@ input#file {
     width: 30px;
     height: 30px;
     padding-bottom: 0;
-  }
-  .main-canvas {
-    width: 100%;
-  }
-  .btns {
-    width: 80%;
   }
 }
