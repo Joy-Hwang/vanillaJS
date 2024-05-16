@@ -7,50 +7,48 @@ const TODOS_KEY = "todos";
 let toDos = [];
 
 function saveToDos() {
-    localStorage.setItem(TODOS_KEY, JSON.stringify(toDos)); //배열을 string으로 변환
+  localStorage.setItem(TODOS_KEY, JSON.stringify(toDos)); //배열을 string으로 변환
 }
 
 function deleteTodo(event) {
-    const li = event.target.parentElement; //target: 클릭된 html요소
-    li.remove();
-    toDos = toDos.filter((toDo) => toDo.id !== parseInt(li.id)); //지우고 싶은 item을 빼고 새로운 array를 넣는 것
-    saveToDos()
+  const li = event.target.parentElement; //target: 클릭된 html요소
+  li.remove();
+  toDos = toDos.filter((toDo) => toDo.id !== parseInt(li.id)); //지우고 싶은 item을 빼고 새로운 array를 넣는 것
+  saveToDos();
 }
 
-
 function paintToDo(newTodo) {
-    const li = document.createElement("li");
-    li.id = newTodo.id;
-    const span = document.createElement("span");
-    span.innerText = newTodo.text;
-    const button = document.createElement("button");
-    button.innerText = "❌";
-    button.addEventListener("click", deleteTodo);
-    li.appendChild(span);
-    li.appendChild(button);
-    toDoList.appendChild(li);
+  const li = document.createElement("li");
+  li.id = newTodo.id;
+  const span = document.createElement("span");
+  span.innerText = newTodo.text;
+  const button = document.createElement("button");
+  button.innerText = "❌";
+  button.addEventListener("click", deleteTodo);
+  li.appendChild(span);
+  li.appendChild(button);
+  toDoList.appendChild(li);
 }
 
 function handleToDoSubmit(event) {
-    event.preventDefault();
-    const newTodo = toDoInput.value;
-    toDoInput.value = "";
-    const newTodoObj = {
-      text: newTodo,
-      id: Date.now(), //랜덤한 숫자를 id로 붙이며 각 li들을 구분하기 위해 사용.
-    };
-    toDos.push(newTodoObj);
-    paintToDo(newTodoObj);
-    saveToDos();
+  event.preventDefault();
+  const newTodo = toDoInput.value;
+  toDoInput.value = "";
+  const newTodoObj = {
+    text: newTodo,
+    id: Date.now(), //랜덤한 숫자를 id로 붙이며 각 li들을 구분하기 위해 사용.
+  };
+  toDos.push(newTodoObj);
+  paintToDo(newTodoObj);
+  saveToDos();
 }
 
 toDoForm.addEventListener("submit", handleToDoSubmit);
 
-
 const savedToDos = localStorage.getItem(TODOS_KEY);
-if(savedToDos !== null) {
-    const parsedToDos = JSON.parse(savedToDos);//string을 object로 변환
-    toDos = parsedToDos; //이전 toDo들 저장
-    parsedToDos.forEach(paintToDo) ; 
-    //forEach: array에 있는 각각의 item에 대한 function을 실행할 수 있게 해줌
+if (savedToDos !== null) {
+  const parsedToDos = JSON.parse(savedToDos); //string을 object로 변환
+  toDos = parsedToDos; //이전 toDo들 저장
+  parsedToDos.forEach(paintToDo);
+  //forEach: array에 있는 각각의 item에 대한 function을 실행할 수 있게 해줌
 }
