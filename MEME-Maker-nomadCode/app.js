@@ -9,18 +9,159 @@ const colorOptions = Array.from(
 );
 
 const modeBtn = document.getElementById("mode-btn");
+const fillBtn = document.getElementById("fill-btn");
 const destroyBtn = document.getElementById("destroy-btn");
 const eraserBtn = document.getElementById("eraser-btn");
 const fileInput = document.getElementById("file");
 const textInput = document.getElementById("text");
 const saveBtn = document.getElementById("save");
 
+let isDrawing = false;
 let isPainting = false;
-let isFilling = false;
+let fillMode = false;
 canvas.width = CANVAS_WIDTH;
 canvas.height = CANVAS_HEIGHT;
 ctx.lineWidth = lineWidth.value;
 ctx.lineCap = "round";
+
+/* mousemove */
+function onMove(event) {
+  if (isDrawing) {
+    ctx.lineTo(event.offsetX, event.offsetY);
+    ctx.stroke();
+    return;
+  }
+  ctx.beginPath(); //선을 하나씩 그리고 끝내야함, 새로운 선으로 시작
+  ctx.moveTo(event.offsetX, event.offsetY);
+}
+
+/* mousedown */
+function startPainting(event) {
+  isDrawing = true;
+}
+
+/* fill button */
+function onfillClick(event) {
+  fillMode = true;
+}
+/* mouseup, mouseleave */
+function cancelPainting(event) {
+  isDrawing = false;
+  if (fillMode) {
+    ctx.fill();
+    fillMode = false;
+  }
+}
+
+/* width change */
+function onLineWidthChange(event) {
+  console.log(event.target.value);
+  ctx.lineWidth = event.target.value;
+}
+
+/* color change */
+function onColorChange(event) {
+  console.log(event.target.value);
+  ctx.strokeStyle = event.target.value;
+  ctx.fillStyle = event.target.value;
+}
+
+function onColorClick(event) {
+  console.dir(event.target);
+  const colorValue = event.target.dataset.color;
+  ctx.strokeStyle = colorValue;
+  ctx.fillStyle = colorValue;
+  color.value = colorValue;
+}
+
+/* paint mode */
+function onModeClick() {
+  if (isPainting) {
+    isPainting = false;
+    modeBtn.innerText = "Paint";
+  } else {
+    isPainting = true;
+    modeBtn.innerText = "Draw";
+  }
+}
+
+function onCanvasClick() {
+  //새로운 사각형을 만들어서 색상으로 채우기
+  if (isPainting) {
+    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+  }
+}
+
+/* destroy */
+function onDestroyClick() {
+  ctx.fillStyle = "white";
+  ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+}
+
+/* erase */
+function onEraserClick() {
+  ctx.strokeStyle = "white";
+  isPainting = false;
+  modeBtn.innerText = "Fill";
+}
+
+/* file */
+function onFileChange(event) {
+  const file = event.target.files[0];
+  const url = URL.createObjectURL(file);
+  const image = new Image();
+  image.src = url;
+  image.onload = function () {
+    ctx.drawImage(image, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    fileInput.value = null;
+  };
+}
+
+/* double click - text */
+function onDoubleClick(event) {
+  const text = textInput.value;
+  if (text !== "") {
+    ctx.save(); //기존 상태를 저장
+    ctx.lineWidth = 1;
+    ctx.font = "68px serif";
+    // ctx.strokeText(text, event.offsetX, event.offsetY);
+    ctx.fillText(text, event.offsetX, event.offsetY);
+    ctx.restore(); //저장한 상태로 돌아가기
+  }
+}
+
+/* Save image button */
+function onSaveClick() {
+  const url = canvas.toDataURL();
+  console.log(url);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "myDrawing.png";
+  a.click();
+  console.log(url);
+}
+
+/***** 이벤트 모음 *****/
+canvas.addEventListener("dblclick", onDoubleClick);
+canvas.addEventListener("mousemove", onMove);
+canvas.addEventListener("mousedown", startPainting);
+canvas.addEventListener("mouseup", cancelPainting);
+canvas.addEventListener("mouseleave", cancelPainting);
+canvas.addEventListener("click", onCanvasClick);
+
+lineWidth.addEventListener("change", onLineWidthChange);
+color.addEventListener("change", onColorChange);
+
+colorOptions.forEach((color) => {
+  color.addEventListener("click", onColorClick);
+});
+
+modeBtn.addEventListener("click", onModeClick);
+destroyBtn.addEventListener("click", onDestroyClick);
+eraserBtn.addEventListener("click", onEraserClick);
+fileInput.addEventListener("change", onFileChange);
+saveBtn.addEventListener("click", onSaveClick);
+fillBtn.addEventListener("click", onfillClick);
 
 /* basic */
 // ctx.fillRect 사각형을 만드는 함수 x, y, width, height
@@ -90,144 +231,3 @@ ctx.lineCap = "round";
 //   console.log(event);
 // }
 // canvas.addEventListener("mousemove", onclick);
-
-/* mousedown */
-function onMove(event) {
-  if (isPainting) {
-    ctx.lineTo(event.offsetX, event.offsetY);
-    ctx.stroke();
-    return;
-  }
-  ctx.beginPath(); //선을 하나씩 그리고 끝내야함, 새로운 선으로 시작
-  ctx.moveTo(event.offsetX, event.offsetY);
-}
-function startPainting(event) {
-  isPainting = true;
-}
-function cancelPainting(event) {
-  isPainting = false;
-}
-
-/* width change */
-function onLineWidthChange(event) {
-  console.log(event.target.value);
-  ctx.lineWidth = event.target.value;
-}
-
-/* color change */
-function onColorChange(event) {
-  console.log(event.target.value);
-  ctx.strokeStyle = event.target.value;
-  ctx.fillStyle = event.target.value;
-}
-
-function onColorClick(event) {
-  console.dir(event.target);
-  const colorValue = event.target.dataset.color;
-  ctx.strokeStyle = colorValue;
-  ctx.fillStyle = colorValue;
-  color.value = colorValue;
-}
-
-/* fill mode */
-function onModeClick() {
-  if (isFilling) {
-    isFilling = false;
-    modeBtn.innerText = "Fill";
-  } else {
-    isFilling = true;
-    modeBtn.innerText = "Draw";
-  }
-}
-
-function onCanvasClick() {
-  //새로운 사각형을 만들어서 색상으로 채우기
-  if (isFilling) {
-    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-  }
-}
-
-/* destroy */
-function onDestroyClick() {
-  ctx.fillStyle = "white";
-  ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-}
-
-/* erase */
-function onEraserClick() {
-  ctx.strokeStyle = "white";
-  isFilling = false;
-  modeBtn.innerText = "Fill";
-}
-
-/* file */
-function onFileChange(event) {
-  const file = event.target.files[0];
-  const url = URL.createObjectURL(file);
-  const image = new Image();
-  image.src = url;
-  image.onload = function () {
-    ctx.drawImage(image, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-    fileInput.value = null;
-  };
-}
-
-/* double click - text */
-function onDoubleClick(event) {
-  const text = textInput.value;
-  if (text !== "") {
-    ctx.save(); //기존 상태를 저장
-    ctx.lineWidth = 1;
-    ctx.font = "68px serif";
-    // ctx.strokeText(text, event.offsetX, event.offsetY);
-    ctx.fillText(text, event.offsetX, event.offsetY);
-    ctx.restore(); //저장한 상태로 돌아가기
-  }
-}
-
-/* Save image button */
-function onSaveClick() {
-  const url = canvas.toDataURL();
-  console.log(url);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "myDrawing.png";
-  a.click();
-  console.log(url);
-}
-
-/***** 이벤트 모음 *****/
-canvas.addEventListener("dblclick", onDoubleClick);
-canvas.addEventListener("mousemove", onMove);
-canvas.addEventListener("mousedown", startPainting);
-canvas.addEventListener("mouseup", cancelPainting);
-canvas.addEventListener("mouseleave", cancelPainting);
-canvas.addEventListener("click", onCanvasClick);
-
-lineWidth.addEventListener("change", onLineWidthChange);
-color.addEventListener("change", onColorChange);
-
-colorOptions.forEach((color) => {
-  color.addEventListener("click", onColorClick);
-});
-
-modeBtn.addEventListener("click", onModeClick);
-destroyBtn.addEventListener("click", onDestroyClick);
-eraserBtn.addEventListener("click", onEraserClick);
-fileInput.addEventListener("change", onFileChange);
-saveBtn.addEventListener("click", onSaveClick);
-
-/* personal */
-/* 750에서 width height값 바꾸기 */
-// let moWidth = 751;
-
-// window.addEventListener("resize", function () {
-//   if (window.innerWidth < moWidth) {
-//     console.log("moWidth");
-//     canvas.width = 600;
-//     canvas.height = 600;
-//   } else {
-//     canvas.width = 800;
-//     canvas.height = 800;
-//   }
-// });
